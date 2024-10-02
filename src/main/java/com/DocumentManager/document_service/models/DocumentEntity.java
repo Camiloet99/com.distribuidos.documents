@@ -35,5 +35,14 @@ public class DocumentEntity {
     @Column("creation_date")
     LocalDateTime creationDate;
 
+    public static DocumentEntity fromUrl(String url, String userId) {
+        return DocumentEntity.builder()
+                .creationDate(LocalDateTime.now())
+                .downloadLink(url)
+                .userDocumentId(Long.valueOf(userId))
+                .isVerified(false)
+                .build();
+    }
+
 
 }

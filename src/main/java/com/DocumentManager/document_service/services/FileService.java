@@ -17,6 +17,8 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+import static reactor.core.publisher.Mono.just;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -122,12 +124,18 @@ public class FileService {
                             storage.delete(blobId);
 
                             return repository.deleteById(documentEntity.getDocumentId())
-                                    .then(Mono.just("Documento eliminado"));
+                                    .then(just("Documento eliminado"));
                         })
                         .orElse(Mono.empty()));
     }
 
-    public List<String> uploadMultipleFiles(MultipartFile[] files, String userId) {
+    private List<DocumentEntity> getEntitiesFromListUrls(List<String> urls, String userId) {
+        return urls.stream()
+                .map(url -> DocumentEntity.fromUrl(url, userId))
+                .toList();
+    }
+
+    public Mono<List<DocumentEntity>> uploadMultipleFiles(MultipartFile[] files, String userId) {
         List<String> fileUrls = new ArrayList<>();
         try {
             String folderName = "usuarios/" + userId + "/";
@@ -140,7 +148,10 @@ public class FileService {
                 // Enviar notificación de subida (opcional)
                 // kafkaProducer.sendNotification("Archivo subido: " + fileName);
             }
-            return fileUrls;
+
+            List<DocumentEntity> documents = getEntitiesFromListUrls(fileUrls, userId);
+            return repository.saveAll(documents)
+                    .collectList();
         } catch (IOException e) {
             throw new RuntimeException("Error subiendo archivos a GCP", e);
         }

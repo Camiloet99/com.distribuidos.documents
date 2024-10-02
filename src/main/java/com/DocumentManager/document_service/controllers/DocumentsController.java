@@ -69,9 +69,11 @@ public class DocumentsController {
 
     // Método para subir múltiples archivos
     @PostMapping("/upload/all/{userId}")
-    public ResponseEntity<List<String>> uploadFiles(@RequestParam("files") MultipartFile[] files, @PathVariable String userId) {
-        List<String> fileUrls = fileService.uploadMultipleFiles(files, userId);
-        return new ResponseEntity<>(fileUrls, HttpStatus.OK);
+    public Mono<ResponseEntity<ResponseBody<List<DocumentEntity>>>> uploadFiles(@RequestParam("files") MultipartFile[] files,
+                                                                                @PathVariable String userId) {
+
+        return fileService.uploadMultipleFiles(files, userId)
+                .map(ControllerUtils::ok);
     }
 
     @GetMapping("/download/all/{userId}")
