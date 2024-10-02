@@ -1,7 +1,6 @@
 package com.DocumentManager.document_service.controllers;
 
 import com.DocumentManager.document_service.models.DocumentEntity;
-import com.DocumentManager.document_service.models.DocumentRequest;
 import com.DocumentManager.document_service.models.ResponseBody;
 import com.DocumentManager.document_service.services.FileService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +22,14 @@ public class DocumentsController {
     public Mono<ResponseEntity<ResponseBody<DocumentEntity>>> uploadFile(
             @RequestParam("file") MultipartFile file,
             @PathVariable String userId,
-            @RequestBody(required = false) DocumentRequest request) {
+            @RequestParam("description") String description,
+            @RequestParam("name") String name,
+            @RequestParam("verified") Boolean isVerified) {
 
-        return fileService.uploadFile(file, userId, request)
+        return fileService.uploadFile(file, userId, description, name, isVerified)
                 .map(ControllerUtils::created);
     }
+
     @PostMapping("/upload2/{userId}")
     public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable String userId) {
         String fileUrl = fileService.uploadFile2(file, userId);
@@ -60,7 +62,7 @@ public class DocumentsController {
     @DeleteMapping("/delete/{userId}/{fileName}")
     public Mono<ResponseEntity<ResponseBody<String>>> deleteFile(@PathVariable Long userId,
                                                                  @PathVariable String fileName) {
-        
+
         return fileService.deleteFile(userId, fileName)
                 .map(ControllerUtils::ok);
     }

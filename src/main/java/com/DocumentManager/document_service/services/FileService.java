@@ -1,7 +1,6 @@
 package com.DocumentManager.document_service.services;
 
 import com.DocumentManager.document_service.models.DocumentEntity;
-import com.DocumentManager.document_service.models.DocumentRequest;
 import com.DocumentManager.document_service.repositories.DocumentRepository;
 import com.DocumentManager.document_service.services.centarlizer.CentralizerFacade;
 import com.google.cloud.storage.*;
@@ -17,8 +16,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import static reactor.core.publisher.Mono.just;
-
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -31,6 +28,17 @@ public class FileService {
     private final DocumentRepository repository;
     private final CentralizerFacade centralizerFacade;
 
+    private DocumentEntity buildDocumentEntity(String url, String userId, String description, String name,
+                                               Boolean isVerified) {
+        return DocumentEntity.builder()
+                .documentName(name)
+                .description(description)
+                .userDocumentId(Long.valueOf(userId))
+                .downloadLink(url)
+                .isVerified(isVerified)
+                .build();
+    }
+
     public Mono<List<DocumentEntity>> getDocumentsByUserId(String userId) {
         log.info("Getting documents of user " + userId);
 
@@ -38,7 +46,8 @@ public class FileService {
                 .collectList();
     }
 
-    public Mono<DocumentEntity> uploadFile(MultipartFile file, String userId, DocumentRequest request) {
+    public Mono<DocumentEntity> uploadFile(MultipartFile file, String userId, String description, String name,
+                                           Boolean verified) {
         try {
             String folderName = "usuarios/" + userId + "/";
             String fileName = folderName + file.getOriginalFilename();
@@ -48,12 +57,13 @@ public class FileService {
             // Enviar notificación de subida
             // kafkaProducer.sendNotification("Archivo subido: " + fileName);
             String url = String.format("https://storage.googleapis.com/%s/%s", bucketName, fileName);
-            return repository.save(DocumentRequest.toEntity(request, url))
+            return repository.save(buildDocumentEntity(url, userId, description, name, verified))
                     .map(documentEntity -> documentEntity);
         } catch (IOException e) {
             throw new RuntimeException("Error subiendo archivo a GCP", e);
         }
     }
+
     public String uploadFile2(MultipartFile file, String userId) {
         try {
             String folderName = "usuarios/" + userId + "/";

@@ -40,7 +40,7 @@ public class WebClientConfig {
         }
 
         return builder
-                .defaultHeader(CONTENT_TYPE, APPLICATION_JSON_VALUE)
+                .defaultHeader(CONTENT_TYPE, ALL_VALUE)
                 .defaultHeader(ACCEPT, ALL_VALUE)
                 .exchangeStrategies(exchangeStrategies)
                 .build();
