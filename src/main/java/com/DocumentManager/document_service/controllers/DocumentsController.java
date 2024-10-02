@@ -22,9 +22,9 @@ public class DocumentsController {
     public Mono<ResponseEntity<ResponseBody<DocumentEntity>>> uploadFile(
             @RequestParam("file") MultipartFile file,
             @PathVariable String userId,
-            @RequestParam("description") String description,
-            @RequestParam("name") String name,
-            @RequestParam("verified") Boolean isVerified) {
+            @RequestParam(value = "description", required = false) String description,
+            @RequestParam(value = "name", required = false) String name,
+            @RequestParam(value = "verified", required = false) Boolean isVerified) {
 
         return fileService.uploadFile(file, userId, description, name, isVerified)
                 .map(ControllerUtils::created);
