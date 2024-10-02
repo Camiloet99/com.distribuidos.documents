@@ -54,6 +54,20 @@ public class FileService {
             throw new RuntimeException("Error subiendo archivo a GCP", e);
         }
     }
+    public String uploadFile2(MultipartFile file, String userId) {
+        try {
+            String folderName = "usuarios/" + userId + "/";
+            String fileName = folderName + file.getOriginalFilename();
+            BlobInfo blobInfo = BlobInfo.newBuilder(bucketName, fileName).build();
+            storage.create(blobInfo, file.getBytes());
+
+            // Enviar notificación de subida
+            //kafkaProducer.sendNotification("Archivo subido: " + fileName);
+            return String.format("https://storage.googleapis.com/%s/%s", bucketName, fileName);
+        } catch (IOException e) {
+            throw new RuntimeException("Error subiendo archivo a GCP", e);
+        }
+    }
 
     public Mono<DocumentEntity> verifyDocumentWithCentralizer(Long userId, Long documentId) {
 

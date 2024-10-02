@@ -28,6 +28,11 @@ public class DocumentsController {
         return fileService.uploadFile(file, userId, request)
                 .map(ControllerUtils::created);
     }
+    @PostMapping("/upload2/{userId}")
+    public ResponseEntity<String> uploadFile(@RequestParam("file") MultipartFile file, @PathVariable String userId) {
+        String fileUrl = fileService.uploadFile2(file, userId);
+        return new ResponseEntity<>(fileUrl, HttpStatus.OK);
+    }
 
     @PostMapping("/verify/user/{userId}/documentId/{documentId}")
     public Mono<ResponseEntity<ResponseBody<DocumentEntity>>> verifyDocumentWithCentralizer(
