@@ -13,6 +13,7 @@ import reactor.core.publisher.Mono;
 
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -35,6 +36,7 @@ public class FileService {
                 .description(description)
                 .userDocumentId(Long.valueOf(userId))
                 .downloadLink(url)
+                .creationDate(LocalDateTime.now())
                 .isVerified(isVerified)
                 .build();
     }
