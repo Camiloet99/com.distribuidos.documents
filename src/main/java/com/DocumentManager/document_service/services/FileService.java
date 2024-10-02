@@ -173,7 +173,7 @@ public class FileService {
         return filePaths;
     }
 
-    public String deleteAllFiles(String userId) {
+    public Mono<String> deleteAllFiles(String userId) {
         String folderPath = "usuarios/" + userId + "/";
         Iterable<Blob> blobs = storage.list(bucketName, Storage.BlobListOption.prefix(folderPath)).iterateAll();
 
@@ -183,7 +183,11 @@ public class FileService {
             // Enviar notificación de eliminación (opcional)
             // kafkaProducer.sendNotification("Archivo eliminado: " + blob.getName());
         }
-        return "Todos los archivos del usuario " + userId + " han sido eliminados.";
+
+        return repository.findByUserDocumentId(Long.valueOf(userId))
+                .collectList()
+                .flatMap(repository::deleteAll)
+                .then(Mono.just("Todos los archivos del usuario " + userId + " han sido eliminados."));
     }
 
 }

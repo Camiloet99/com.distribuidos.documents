@@ -84,8 +84,9 @@ public class DocumentsController {
     }
 
     @DeleteMapping("/delete/all/{userId}")
-    public ResponseEntity<String> deleteAllFiles(@PathVariable String userId) {
-        String result = fileService.deleteAllFiles(userId);
-        return new ResponseEntity<>(result, HttpStatus.OK);
+    public Mono<ResponseEntity<ResponseBody<String>>> deleteAllFiles(@PathVariable String userId) {
+
+        return fileService.deleteAllFiles(userId)
+                .map(ControllerUtils::ok);
     }
 }
