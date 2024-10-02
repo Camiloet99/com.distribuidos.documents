@@ -1,0 +1,45 @@
+spring:
+  port: 8080
+  forward-headers-strategy: framework
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+  application:
+    name: document-service
+  cloud:
+    gcp:
+      storage:
+        credentials:
+          location: classpath:documentmanager-436319-7eda386e0f86.json
+        bucket: gestor-documental-bucket
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notification_group
+---
+# ENVIRONMENT
+environment:
+  security-disable-ssl-cert-validation: ${DISABLE_SSL_CERT_VALIDATION:false}
+  operator-id: ${OPERATOR_ID:66dfa51b4d8f56001517a04c}
+  operator-name: ${OPERATOR_NAME:ArchivoFiel}
+  domains:
+    notifications-domain: ${NOTIFICATIONS_DOMAIN:example}
+    centralizer-domain: ${CENTRALIZER_DOMAIN:https://govcarpeta-apis-83e1c996379d.herokuapp.com/apis}
+  service-retry:
+    max-attempts: ${SERVICE_RETRY_MAX_ATTEMPTS:2}
+  service-name: distribuidos/users
+  max-payload-size-in-mb: ${MAX_PAYLOAD_SIZE_IN_MB:10}
+---
+# R2DBC
+spring:
+  r2dbc:
+    show-sql: true
+    url: r2dbc:pool:mysql://localhost:3306/maindatabase
+    username: ${DB_USER:admin}
+    password: ${DB_PASSWORD:123456}
+---
+# Logging
+logging:
+  level:
+    root: info
