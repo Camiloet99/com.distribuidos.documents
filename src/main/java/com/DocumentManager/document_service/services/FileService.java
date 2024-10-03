@@ -165,24 +165,19 @@ public class FileService {
         List<String> filePaths = new ArrayList<>();
         String folderPath = "usuarios/" + userId + "/";
 
-        // Usar un directorio temporal específico para tu aplicación
         String tempDir = System.getProperty("java.io.tmpdir") + "myapp/";
         File dir = new File(tempDir);
         if (!dir.exists()) {
-            dir.mkdirs(); // Crear el directorio si no existe
+            dir.mkdirs();
         }
 
-        // Listar los blobs del bucket en GCP para la carpeta del usuario
         Iterable<Blob> blobs = storage.list(bucketName, Storage.BlobListOption.prefix(folderPath)).iterateAll();
 
         for (Blob blob : blobs) {
-            // Formar la ruta completa en el directorio temporal
             String downloadFilePath = tempDir + blob.getName().replace(folderPath, "");
 
-            // Descargar el archivo al directorio temporal
             blob.downloadTo(Paths.get(downloadFilePath));
             filePaths.add(downloadFilePath);
-            // Enviar notificación de descarga (opcional)
             // kafkaProducer.sendNotification("Archivo descargado: " + blob.getName());
         }
         return filePaths;
@@ -193,18 +188,14 @@ public class FileService {
     public String deleteAllFiles(String userId) {
         String folderPath = "usuarios/" + userId + "/";
 
-        // Listar los blobs del bucket en GCP para la carpeta del usuario
         Iterable<Blob> blobs = storage.list(bucketName, Storage.BlobListOption.prefix(folderPath)).iterateAll();
 
         for (Blob blob : blobs) {
-            // Eliminar cada archivo (Blob) encontrado
             boolean deleted = storage.delete(blob.getBlobId());
 
             if (deleted) {
-                // Enviar notificación de eliminación (opcional)
                 // kafkaProducer.sendNotification("Archivo eliminado: " + blob.getName());
             } else {
-                // Manejar el caso donde el archivo no fue eliminado
                 // kafkaProducer.sendNotification("Error al eliminar archivo: " + blob.getName());
             }
         }
@@ -213,46 +204,37 @@ public class FileService {
     }
 
     public String downloadEspecificFile(String userId, String fileName) {
-        // Ruta del archivo dentro del bucket
         String filePath = "usuarios/" + userId + "/" + fileName;
 
-        // Usar un directorio temporal específico para tu aplicación
         String tempDir = System.getProperty("java.io.tmpdir") + "myapp/";
         File dir = new File(tempDir);
         if (!dir.exists()) {
-            dir.mkdirs(); // Crear el directorio si no existe
+            dir.mkdirs();
         }
 
-        // Crear la ruta de destino para la descarga en el equipo
         String downloadFilePath = tempDir + fileName;
 
-        // Obtener el blob (archivo) del bucket
         Blob blob = storage.get(bucketName, filePath);
 
         if (blob == null) {
             throw new RuntimeException("El archivo no existe en el bucket.");
         }
 
-        // Descargar el archivo al directorio temporal
         blob.downloadTo(Paths.get(downloadFilePath));
 
-        // Retornar la ruta donde fue descargado
         return downloadFilePath;
     }
 
 
     public String deleteEspecificFile(String userId, String fileName) {
-        // Ruta del archivo dentro del bucket
         String filePath = "usuarios/" + userId + "/" + fileName;
 
-        // Obtener el blob (archivo) del bucket
         Blob blob = storage.get(bucketName, filePath);
 
         if (blob == null) {
             throw new RuntimeException("El archivo no existe en el bucket.");
         }
 
-        // Eliminar el archivo
         boolean deleted = storage.delete(blob.getBlobId());
 
         if (deleted) {
@@ -265,10 +247,8 @@ public class FileService {
     public List<String> listFiles(String userId) {
         String folderPath = "usuarios/" + userId + "/";
 
-        // Listar los blobs del bucket en GCP para la carpeta del usuario
         Iterable<Blob> blobs = storage.list(bucketName, Storage.BlobListOption.prefix(folderPath)).iterateAll();
 
-        // Obtener solo los nombres de los archivos en una lista
         List<String> fileNames = StreamSupport.stream(blobs.spliterator(), false)
                 .map(Blob::getName)
                 .collect(Collectors.toList());
