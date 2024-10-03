@@ -21,14 +21,14 @@ WORKDIR /app
 # Copiar el JAR construido desde la etapa de construcción usando comodín
 COPY --from=build /app/target/*.jar app.jar
 
-# Establecer la variable de entorno para las credenciales de GCP
-ENV GOOGLE_APPLICATION_CREDENTIALS=/app/documentmanager-436319-7eda386e0f86.json
-
-# Copiar las credenciales a la imagen
-COPY src/main/resources/documentmanager-436319-7eda386e0f86.json /app/
-
 # Exponer el puerto en el que la aplicación escucha
-EXPOSE 8081
+EXPOSE 8080
+
+# Agregar al Dockerfile en la etapa final
+# Agregar esto en tu Dockerfile
+COPY src/main/resources/documentmanager-436319-ad4006b4fbc9.json /app/documentmanager-436319-ad4006b4fbc9.json
+
+ENV GOOGLE_APPLICATION_CREDENTIALS=/app/documentmanager-436319-ad4006b4fbc9.json
 
 # Comando para ejecutar la aplicación
 ENTRYPOINT ["java", "-jar", "app.jar"]

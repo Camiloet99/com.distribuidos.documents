@@ -88,4 +88,23 @@ public class DocumentsController {
         String result = fileService.deleteAllFiles(userId);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+    @GetMapping("/download/especific/{userId}/{fileName}")
+    public ResponseEntity<String> downloadEspecificFile(@PathVariable String userId, @PathVariable String fileName) {
+        String filePath = fileService.downloadEspecificFile(userId, fileName);
+        return new ResponseEntity<>(filePath, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete/especific/{userId}/{fileName}")
+    public ResponseEntity<String> deleteFile(@PathVariable String userId, @PathVariable String fileName) {
+        String result = fileService.deleteEspecificFile(userId, fileName);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
+
+    @GetMapping("/list/all/{userId}")
+    public ResponseEntity<List<String>> listFiles(@PathVariable String userId) {
+        List<String> fileNames = fileService.listFiles(userId);
+        return new ResponseEntity<>(fileNames, HttpStatus.OK);
+    }
+
 }

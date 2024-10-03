@@ -11,13 +11,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import reactor.core.publisher.Mono;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.List;
+import java.util.stream.Collectors;
 import static reactor.core.publisher.Mono.just;
+import java.util.stream.StreamSupport;
+
 
 @Slf4j
 @Service
@@ -160,30 +164,116 @@ public class FileService {
     public List<String> downloadAllFiles(String userId) {
         List<String> filePaths = new ArrayList<>();
         String folderPath = "usuarios/" + userId + "/";
+
+        // Usar un directorio temporal específico para tu aplicación
+        String tempDir = System.getProperty("java.io.tmpdir") + "myapp/";
+        File dir = new File(tempDir);
+        if (!dir.exists()) {
+            dir.mkdirs(); // Crear el directorio si no existe
+        }
+
+        // Listar los blobs del bucket en GCP para la carpeta del usuario
         Iterable<Blob> blobs = storage.list(bucketName, Storage.BlobListOption.prefix(folderPath)).iterateAll();
 
         for (Blob blob : blobs) {
-            String tempFilePath = System.getProperty("java.io.tmpdir") + "/" + blob.getName();
-            blob.downloadTo(Paths.get(tempFilePath));
-            filePaths.add(tempFilePath);
+            // Formar la ruta completa en el directorio temporal
+            String downloadFilePath = tempDir + blob.getName().replace(folderPath, "");
 
+            // Descargar el archivo al directorio temporal
+            blob.downloadTo(Paths.get(downloadFilePath));
+            filePaths.add(downloadFilePath);
             // Enviar notificación de descarga (opcional)
             // kafkaProducer.sendNotification("Archivo descargado: " + blob.getName());
         }
         return filePaths;
     }
 
+
+
     public String deleteAllFiles(String userId) {
         String folderPath = "usuarios/" + userId + "/";
+
+        // Listar los blobs del bucket en GCP para la carpeta del usuario
         Iterable<Blob> blobs = storage.list(bucketName, Storage.BlobListOption.prefix(folderPath)).iterateAll();
 
         for (Blob blob : blobs) {
-            storage.delete(blob.getBlobId());
+            // Eliminar cada archivo (Blob) encontrado
+            boolean deleted = storage.delete(blob.getBlobId());
 
-            // Enviar notificación de eliminación (opcional)
-            // kafkaProducer.sendNotification("Archivo eliminado: " + blob.getName());
+            if (deleted) {
+                // Enviar notificación de eliminación (opcional)
+                // kafkaProducer.sendNotification("Archivo eliminado: " + blob.getName());
+            } else {
+                // Manejar el caso donde el archivo no fue eliminado
+                // kafkaProducer.sendNotification("Error al eliminar archivo: " + blob.getName());
+            }
         }
+
         return "Todos los archivos del usuario " + userId + " han sido eliminados.";
+    }
+
+    public String downloadEspecificFile(String userId, String fileName) {
+        // Ruta del archivo dentro del bucket
+        String filePath = "usuarios/" + userId + "/" + fileName;
+
+        // Usar un directorio temporal específico para tu aplicación
+        String tempDir = System.getProperty("java.io.tmpdir") + "myapp/";
+        File dir = new File(tempDir);
+        if (!dir.exists()) {
+            dir.mkdirs(); // Crear el directorio si no existe
+        }
+
+        // Crear la ruta de destino para la descarga en el equipo
+        String downloadFilePath = tempDir + fileName;
+
+        // Obtener el blob (archivo) del bucket
+        Blob blob = storage.get(bucketName, filePath);
+
+        if (blob == null) {
+            throw new RuntimeException("El archivo no existe en el bucket.");
+        }
+
+        // Descargar el archivo al directorio temporal
+        blob.downloadTo(Paths.get(downloadFilePath));
+
+        // Retornar la ruta donde fue descargado
+        return downloadFilePath;
+    }
+
+
+    public String deleteEspecificFile(String userId, String fileName) {
+        // Ruta del archivo dentro del bucket
+        String filePath = "usuarios/" + userId + "/" + fileName;
+
+        // Obtener el blob (archivo) del bucket
+        Blob blob = storage.get(bucketName, filePath);
+
+        if (blob == null) {
+            throw new RuntimeException("El archivo no existe en el bucket.");
+        }
+
+        // Eliminar el archivo
+        boolean deleted = storage.delete(blob.getBlobId());
+
+        if (deleted) {
+            return "El archivo " + fileName + " ha sido eliminado.";
+        } else {
+            return "Error al eliminar el archivo " + fileName + ".";
+        }
+    }
+
+    public List<String> listFiles(String userId) {
+        String folderPath = "usuarios/" + userId + "/";
+
+        // Listar los blobs del bucket en GCP para la carpeta del usuario
+        Iterable<Blob> blobs = storage.list(bucketName, Storage.BlobListOption.prefix(folderPath)).iterateAll();
+
+        // Obtener solo los nombres de los archivos en una lista
+        List<String> fileNames = StreamSupport.stream(blobs.spliterator(), false)
+                .map(Blob::getName)
+                .collect(Collectors.toList());
+
+        return fileNames;
     }
 
 }
