@@ -1,0 +1,13 @@
+/Users/camilo.echeverri/Desktop/maestria/distribuidos/com.distribuidos.documents/src/main/java/com/DocumentManager/document_service/Application.java
+/Users/camilo.echeverri/Desktop/maestria/distribuidos/com.distribuidos.documents/src/main/java/com/DocumentManager/document_service/config/EnvironmentConfig.java
+/Users/camilo.echeverri/Desktop/maestria/distribuidos/com.distribuidos.documents/src/main/java/com/DocumentManager/document_service/config/WebClientConfig.java
+/Users/camilo.echeverri/Desktop/maestria/distribuidos/com.distribuidos.documents/src/main/java/com/DocumentManager/document_service/controllers/ControllerUtils.java
+/Users/camilo.echeverri/Desktop/maestria/distribuidos/com.distribuidos.documents/src/main/java/com/DocumentManager/document_service/controllers/DocumentsController.java
+/Users/camilo.echeverri/Desktop/maestria/distribuidos/com.distribuidos.documents/src/main/java/com/DocumentManager/document_service/exceptions/ErrorCodes.java
+/Users/camilo.echeverri/Desktop/maestria/distribuidos/com.distribuidos.documents/src/main/java/com/DocumentManager/document_service/models/DocumentEntity.java
+/Users/camilo.echeverri/Desktop/maestria/distribuidos/com.distribuidos.documents/src/main/java/com/DocumentManager/document_service/models/ResponseBody.java
+/Users/camilo.echeverri/Desktop/maestria/distribuidos/com.distribuidos.documents/src/main/java/com/DocumentManager/document_service/repositories/DocumentRepository.java
+/Users/camilo.echeverri/Desktop/maestria/distribuidos/com.distribuidos.documents/src/main/java/com/DocumentManager/document_service/services/FileService.java
+/Users/camilo.echeverri/Desktop/maestria/distribuidos/com.distribuidos.documents/src/main/java/com/DocumentManager/document_service/services/KafkaProducer.java
+/Users/camilo.echeverri/Desktop/maestria/distribuidos/com.distribuidos.documents/src/main/java/com/DocumentManager/document_service/services/centarlizer/CentralizerFacade.java
+/Users/camilo.echeverri/Desktop/maestria/distribuidos/com.distribuidos.documents/src/main/java/com/DocumentManager/document_service/services/centarlizer/models/VerifyDocumentRequest.java

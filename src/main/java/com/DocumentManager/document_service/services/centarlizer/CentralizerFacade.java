@@ -26,11 +26,11 @@ public class CentralizerFacade {
     private final WebClient webClient;
     private final EnvironmentConfig environmentConfig;
 
-    private static final String VERIFY_DOCUMENT = "/apis/authenticateDocument";
+    private static final String VERIFY_DOCUMENT = "/authenticateDocument";
 
     private VerifyDocumentRequest getVerifyDocumentRequest(Long citizenId, DocumentEntity entity) {
         return VerifyDocumentRequest.builder()
-                .citizenDocument(String.valueOf(citizenId))
+                .citizenDocument(citizenId)
                 .documentTitle(entity.getDescription())
                 .urlDocument(entity.getDownloadLink())
                 .build();
@@ -41,6 +41,7 @@ public class CentralizerFacade {
         val resourceUri = environmentConfig.getDomains().getCentralizerDomain() + VERIFY_DOCUMENT;
         VerifyDocumentRequest request = getVerifyDocumentRequest(citizenId, documentEntity);
 
+        log.info("verificando documento " + resourceUri.toLowerCase());
         return webClient
                 .method(HttpMethod.PUT)
                 .uri(resourceUri)

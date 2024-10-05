@@ -1,0 +1,55 @@
+spring:
+  port: 8080
+  forward-headers-strategy: framework
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json
+    min-response-size: 1024
+  application:
+    name: document-service
+  cloud:
+    gcp:
+      storage:
+        credentials:
+          type: service_account
+          project_id: documentmanager-436319
+          private_key_id: 7eda386e0f8603985e76ebc632577230a1af0477
+          private_key: "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDc6zaM1atTtOGU\nq8AYEWJHz7kPO9wAdJmq0tiV/7OKG78IUKrtGM3nYkNGng9dnvmOLX5ByYX2Ovo2\nlbG60wlMrifbtizaKkAIs9OGcBeke6jiGixlT1JZW6vUEFDyIXBVEK/7rIrxfQzD\n2SEAHmL7tRAWk1E+RQoU1sWN/HrUKNR4zRE7mD9CzewGm+iQyFT+IcxGKe9jz4z+\nMj0jP1mK1aiCTGmo/GpDR7oO7fRAPLjZ/ZPbg6Wr2S1TS9ps3FiTt9NqxQU1KTJa\nUmDKUXMptknwlJSiq8yR4PA5xBltQp3xcyIA6z2DQw2NOmW8BlMnkpTwmHOHFw7c\nyqcs9W0FAgMBAAECggEAGSN00iLQO5a2IqZGlhaIUfabrtWXa7/Y6pzSg4MUyY7t\ntoMDaDZt27oNQMBkrDkWWazolJDbexDr/wEat9Ei2kRpCbHZubucDMF1vPMNZayi\no5Pp4F9d1gg97cQridnvP+bFt8RDDUa3CKQxAqPyjITmf0MlOApAIu3rjgQgb/q9\nTYXWbw3PHi0e0XPAZVkcxkmkIvPC6lPQMyHuYrslD7UNdhk3bXoQq7mJRVw+UyMQ\npy+yaGtKriwA0eONzE+43eM3g4tNpvBhw2NbIyckGXH3XE1lpwdd/sFIQvQbGGW/\nb47JIowDbLV0OfmX4PpLruCT5AW2MoK6qd2wWrI3cQKBgQDxr+3pSsOA134N4uMT\n7+13+P8h8daMQr47gxSE52ijHqC26lxXf1BUinwiHQPECAC+J4uhEJRl/lThPbm2\nr/vBg1KQpOkuoL7psdBTKqYxpKfB3jExw2y2yZI3fudAIRSXvYRo7NSR2ftBQYdZ\nSx/ZFMI8bktSpOgp6B2jptLZrQKBgQDqAG0wY51z8gYC9CQlCbWHEQhsnzLDXUDy\nf2KqomRkCnizfT3kLInw052K+PxgMmtkrPmXegRW/NeYEpsXvq3HXA0gn/eRgPef\nMILKVz6rEzBirfhsExBLnxrEDM7OmrXL8CCcpMIa13A9DEjt1dXbTRxbB1Xbe2ze\nCRJXkAB7uQKBgQCz8jQl/ZdgZ5GgDyzZHEtnhwmWoXQHjG4M60Ssy4r54ITyi73j\nG5SYzV8tGwNBwl+jNNhePHTxF5Lk/Us3vQGqC/e+YDqJj/91CgI82cVRsvGAg8mG\n7qUT1zK5hQ/yjG7Dp8RdRu/iBDVxWbPHhQqaWz1fNxN33fZJtVvUDBJzJQKBgQCJ\nmPCb2Ke4iyN/zyIF6XylzJ1Aiihmesp7De7t2YngzcuF9+pR5uLCCx2Dn79/rYY6\n7//gU66DnDAGS0KJpuU26mkJuybvl3+ESxlNdBn0rNbx38zJeDhHz2oEyGc/U/f8\n0NnMYpGFCRQFwdiMigYz61b2LA0Pf7dXpMv1U0cFeQKBgFH56QP5p2nHVpRKki1Y\nXLxHcQfb3K8/6xlyab735knzvWSwb2WHjsVyIZqSJ3Rc0U+gsq8CAaARB5yugGP1\n3M2jhZ76kx82RH3lwwZHRs9ihQOEDIQEW3tETyob9QCKC+Gx/KzseKZbZpQpNqfW\nDR6Djy1XO77IrjQzq6fZWZWD\n-----END PRIVATE KEY-----\n"
+          client_email: storageadmin@documentmanager-436319.iam.gserviceaccount.com
+          client_id: 111389764767321848520
+          auth_uri: https://accounts.google.com/o/oauth2/auth
+          token_uri: https://oauth2.googleapis.com/token
+          auth_provider_x509_cert_url: https://www.googleapis.com/oauth2/v1/certs
+          client_x509_cert_url: https://www.googleapis.com/robot/v1/metadata/x509/storageadmin%40documentmanager-436319.iam.gserviceaccount.com
+          universe_domain: googleapis.com
+        bucket: gestor-documental-bucket
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      group-id: notification_group
+---
+# ENVIRONMENT
+environment:
+  security-disable-ssl-cert-validation: ${DISABLE_SSL_CERT_VALIDATION:false}
+  operator-id: ${OPERATOR_ID:66dfa51b4d8f56001517a04c}
+  operator-name: ${OPERATOR_NAME:ArchivoFiel}
+  domains:
+    notifications-domain: ${NOTIFICATIONS_DOMAIN:example}
+    centralizer-domain: ${CENTRALIZER_DOMAIN:https://govcarpeta-apis-83e1c996379d.herokuapp.com/apis}
+  service-retry:
+    max-attempts: ${SERVICE_RETRY_MAX_ATTEMPTS:2}
+  service-name: distribuidos/users
+  max-payload-size-in-mb: ${MAX_PAYLOAD_SIZE_IN_MB:10}
+---
+# R2DBC
+spring:
+  r2dbc:
+    show-sql: true
+    url: r2dbc:pool:mysql://localhost:3306/maindatabase
+    username: ${DB_USER:admin}
+    password: ${DB_PASSWORD:123456}
+---
+# Logging
+logging:
+  level:
+    root: info

@@ -11,7 +11,7 @@ import lombok.Value;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class VerifyDocumentRequest {
 
-    String citizenDocument;
+    Long citizenDocument;
     String urlDocument;
     String documentTitle;
 
